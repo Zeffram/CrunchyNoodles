@@ -1,0 +1,25 @@
+/* EXAMPLE 1 -- Query Recursive Hierarhcy  */
+
+WITH RECURSIVE CallUp_Flat(UserId,fullname,jobtitle,department,phone,positionnb, leadername) AS
+	(
+		SELECT rt.userid
+			, rt.fullname
+			, rt.jobtitle
+			, rt.department
+			, rt.phone
+			,rt.HRPositionNumber
+			, rt.fullname as leadername
+		FROM [HR_RESOURCE_TABLE] rt
+		WHERE rt.mgr_shortid='ROGERS'
+		UNION ALL
+		SELECT indirect.userid
+		, indirect.fullname
+		, indirect.JobTitle
+		, indirect.department
+		,indirect.phone,indirect.HRPositionNumber
+		, direct.fullname as leadername
+		FROM CallUp_Flat direct, [HR_RESOURCE_TABLE]
+		WHERE direct.userid = indirect.mgr_shortid
+	
+	)
+SELECT * FROM CallUp_Flat ORDER BY department
